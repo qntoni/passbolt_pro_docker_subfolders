@@ -16,6 +16,8 @@ Prerequisites
   - https://passbolt.local/docker 
   - https://passbolt.local:4443/k8s
 
+**NOTE:** The path /docker and /k8s are placeholders and can be changed for any other names. With this repository as a template, it will be easier for you to create as many sub folders as you need following the conventions. You will need to update the `.mysql/init.sql` and `.docker-compose-pro.yaml` file to create new database credentials and containers.
+
 ## Configuration
 
 ### Nginx
