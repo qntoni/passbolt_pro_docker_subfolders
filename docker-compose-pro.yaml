@@ -62,8 +62,8 @@ services:
       APP_FULL_BASE_URL: https://passbolt.local:4443
       APP_BASE: "/k8s"
       DATASOURCES_DEFAULT_HOST: "db"
-      DATASOURCES_DEFAULT_USERNAME: "passbolt"
-      DATASOURCES_DEFAULT_PASSWORD: "P4ssb0lt"
+      DATASOURCES_DEFAULT_USERNAME: "passbolt2"
+      DATASOURCES_DEFAULT_PASSWORD: "P4ssb0lt2"
       DATASOURCES_DEFAULT_DATABASE: "passbolt2"
     volumes:
       - gpg_volume2:/etc/passbolt/gpg
