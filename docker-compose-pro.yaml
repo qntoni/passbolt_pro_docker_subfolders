@@ -17,6 +17,7 @@ services:
       MYSQL_USER: "passbolt"
       MYSQL_PASSWORD: "P4ssb0lt"
     volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - database_volume:/var/lib/mysql
   passbolt:
     image: passbolt/passbolt:latest-pro
