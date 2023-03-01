@@ -1,0 +1,87 @@
+version: '3.9'
+services:
+  front:
+    image: nginx:latest
+    volumes: 
+    - ./nginx/core.conf.d/proxy.conf:/etc/nginx/conf.d/default.conf
+    - ./nginx/nginx.conf/:/etc/nginx/nginx.conf
+    ports:
+    - 8080:80
+    - 4433:443
+  db:
+    image: mariadb:10.3
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "passbolt"
+      MYSQL_USER: "passbolt"
+      MYSQL_PASSWORD: "P4ssb0lt"
+    volumes:
+      - database_volume:/var/lib/mysql
+  passbolt:
+    image: passbolt/passbolt:latest-pro
+    #Alternatively you can use rootless:
+    #image: passbolt/passbolt:latest-pro-non-root
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      APP_FULL_BASE_URL: https://passbolt.local:443
+      APP_BASE: "/docker"
+      DATASOURCES_DEFAULT_HOST: "db"
+      DATASOURCES_DEFAULT_USERNAME: "passbolt"
+      DATASOURCES_DEFAULT_PASSWORD: "P4ssb0lt"
+      DATASOURCES_DEFAULT_DATABASE: "passbolt"
+    volumes:
+      - gpg_volume:/etc/passbolt/gpg
+      - jwt_volume:/etc/passbolt/jwt
+      - ${PWD}/subscription_key.txt:/etc/passbolt/subscription_key.txt:ro
+      - ./nginx/nginx-passbolt.conf:/etc/nginx/sites-enabled/nginx-passbolt.conf
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # Uncomment line below if you are using ldap sync. Change '* * * * *' to your preferred sync schedule. More info: https://en.wikipedia.org/wiki/Cron
+        # echo '* * * * * www-data exec /bin/bash -c "source /etc/environment && /usr/share/php/passbolt/bin/cake directory_sync all" >> /var/log/cron.log 2>&1' >> /etc/cron.d/passbolt-pro-server
+        /usr/bin/wait-for.sh -t 0 db:3306 -- /docker-entrypoint.sh
+    ports:
+      - 80:80
+      - 443:443
+    #Alternatively for non-root images:
+    # - 8080:80
+    # - 4443:433
+  passbolt2:
+    image: passbolt/passbolt:latest-pro
+    #Alternatively you can use rootless:
+    #image: passbolt/passbolt:latest-pro-non-root
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      APP_FULL_BASE_URL: https://passbolt.local:4443
+      APP_BASE: "/k8s"
+      DATASOURCES_DEFAULT_HOST: "db"
+      DATASOURCES_DEFAULT_USERNAME: "passbolt"
+      DATASOURCES_DEFAULT_PASSWORD: "P4ssb0lt"
+      DATASOURCES_DEFAULT_DATABASE: "passbolt2"
+    volumes:
+      - gpg_volume2:/etc/passbolt/gpg
+      - jwt_volume2:/etc/passbolt/jwt
+      - ${PWD}/subscription_key.txt:/etc/passbolt/subscription_key.txt:ro
+      - ./nginx/nginx-passbolt.conf:/etc/nginx/sites-enabled/nginx-passbolt.conf
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # Uncomment line below if you are using ldap sync. Change '* * * * *' to your preferred sync schedule. More info: https://en.wikipedia.org/wiki/Cron
+        # echo '* * * * * www-data exec /bin/bash -c "source /etc/environment && /usr/share/php/passbolt/bin/cake directory_sync all" >> /var/log/cron.log 2>&1' >> /etc/cron.d/passbolt-pro-server
+        /usr/bin/wait-for.sh -t 0 db:3306 -- /docker-entrypoint.sh
+    ports:
+      - 8082:80
+      - 4443:443
+volumes:
+  database_volume:
+  gpg_volume:
+  jwt_volume:
+  gpg_volume2:
+  jwt_volume2:
