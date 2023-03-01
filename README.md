@@ -12,7 +12,9 @@ Prerequisites
 - Fill the file named subscription_key.txt in the root directory and replace the placeholder with the copy of your subscription key into it.
 - Open a terminal in the directory containing the docker-compose.yml file.
 - Run `docker-compose -f docker-compose-pro.yaml up -d` to start the containers in the background.
-- Access the Passbolt instances at https://passbolt.local:443/docker and https://passbolt.local:4443/k8s.
+- Access the Passbolt instances at:
+  - https://passbolt.local/docker 
+  - https://passbolt.local:4443/k8s
 
 ## Configuration
 
@@ -40,6 +42,7 @@ The following volumes are defined:
 - `database_volume`: The volume used by the db container to store its data.
 - `gpg_volume and gpg_volume2`: The volumes used by the Passbolt containers to store GPG keys.
 - `jwt_volume and jwt_volume2`: The volumes used by the Passbolt containers to store JWT authentication keys.
+- `init_sql`: The volume used by the db container to execute an init.sql script on startup. The init.sql script creates the passbolt and passbolt2 databases and users, and grants them the necessary privileges.
 
 ## License
 
