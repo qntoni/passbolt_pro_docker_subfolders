@@ -38,6 +38,21 @@ There are two Passbolt containers, passbolt and passbolt2, each with their own d
 
 The command section of each container defines a startup script that waits for the db container to be available before running the Passbolt entry point script.
 
+#### Create an admin
+
+You'll need to create as many admin as passbolt containers, `passbolt` and `passbolt2` are the provided containers. Please, change the container name following this example.
+
+```
+docker-compose -f docker-compose-pro.yaml exec passbolt su -m -c "/usr/share/php/passbolt/bin/cake \
+  passbolt register_user \
+  -u your@email \
+  -f your_name \
+  -l your_surname \
+  -r admin" -s /bin/sh www-data
+```
+
+It should output something like: https://passbolt.local:4443/k8s/setup/install/user_id/token_id
+
 ### Volumes
 
 The following volumes are defined:
